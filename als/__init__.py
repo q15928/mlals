@@ -1,1 +1,1 @@
-from .multinomial_nb import MultinomialNBClassifier
+from .classifiers import MultinomialNBClassifier
