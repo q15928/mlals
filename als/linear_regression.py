@@ -49,7 +49,6 @@ class LinearRegression:
             
             # calculate the error for a prediction
             delta = self.predict(self.X) - self.y
-            delta = self.y - self.predict(self.X)
 #             print delta
             
             # calculate the partial derivates
