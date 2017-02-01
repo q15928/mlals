@@ -36,7 +36,13 @@ class LinearRegression:
         return np.dot(X_new, self.W)[:, None]
     
     def train(self, X, y):
-        """
+        """Train the Linear Regression Model with Gradient
+        descent algorithm to learn the model weights
+        
+        Parameters:
+        -----------
+            X: feature array for training samples
+            y: labels for training samples
         """
         # initialise the weights with all zero
         self.X = X
@@ -44,12 +50,11 @@ class LinearRegression:
         self.W = np.zeros(X.shape[1]+1)
         
         for _ in range(self.max_iter):
-            # store the rss
+            # store the rss for each iteration
             self.rss_list.append(self._cal_rss(self.X, self.y))
             
             # calculate the error for a prediction
             delta = self.predict(self.X) - self.y
-#             print delta
             
             # calculate the partial derivates
             ones = np.ones(self.X.shape[0])[:, None]
@@ -58,7 +63,6 @@ class LinearRegression:
             
             # update the weights
             self.W = self.W - self.learning_rate * derivatives.reshape(self.W.shape)
-#             print self.W
     
         
     def _cal_rss(self, X, y):
