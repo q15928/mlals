@@ -1,3 +1,5 @@
+import numpy as np
+
 class LinearRegression:
     """Linear regression model implementation from scratch.
     Linear regression model is a very common regression model
