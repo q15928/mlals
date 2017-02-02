@@ -60,8 +60,8 @@ class LogisticRegression:
         self.transformed_y = self._convert_labels()
         
         for _ in range(self.max_iter):
-            # store the rss for each iteration
-#             self.rss_list.append(self._cal_rss(self.X, self.y))
+            # store the log loss for each iteration
+            self.logloss_list.append(self._cal_log_loss())
             
             # calculate the error for a prediction
             delta = self.predict_prob(self.X) - self.transformed_y
@@ -153,3 +153,12 @@ class LogisticRegression:
             return np.where(self.y==self.positive_label, ones, zeros)
         else:
             return self.y
+
+    def _cal_log_loss(self):
+        """Calculate the log loss with with the weights learned
+        by the model
+        """
+        y_predict_prob = self.predict_prob(self.X)
+        
+        return -np.sum(self.transformed_y * np.log(y_predict_prob) + \
+                       (1-self.transformed_y) * np.log(1 - y_predict_prob))
