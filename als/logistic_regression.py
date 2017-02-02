@@ -1,13 +1,13 @@
 class LogisticRegression:
     """Logistic regression model implementation from scratch.
-    Linear regression model is a simple classification model
+    Logistic regression model is a simple classification model
     which the output variable is discrete and categorical. 
     By using "sigmoid" function, Logistic regression "squashes"
-    the output variables between 0 and 1 representing the probability
-    of predicting possitive value.
+    the output variables between 0 and 1 to represent the 
+    probability of predicting possitive value.
     
     Gradient descent is the optimisation algorithm to minimise
-    the cost function which is the residual sum of square (RSS).
+    the cost function which is the log loss function.
     """
     
     def __init__(self, learning_rate=0.01, max_iter=100, positive_label=None, threshold=0.5):
@@ -22,9 +22,9 @@ class LogisticRegression:
             positive_label: the positive label for output
                 variable (default = None)
             threshold: threshold to define the probability of 
-                positive or negative predictions (default = 0.5)
-            
+                positive or negative predictions (default = 0.5)            
         """
+        
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.positive_label = positive_label
@@ -33,7 +33,7 @@ class LogisticRegression:
         self.logloss_list = []
 
     def train(self, X, y):
-        """Train the Linear Regression Model with Gradient
+        """Train the Logistic Regression Model with Gradient
         descent algorithm to learn the model weights
         
         Parameters:
@@ -49,8 +49,9 @@ class LogisticRegression:
             self.positive_label = self.labels[0]
         self.neg_label = self.labels[self.labels != self.positive_label][0]
 
-        # initialise the weights with all zero
-#         self.W = np.zeros(X.shape[1]+1)
+        # initialise the weights with all zeros
+        # self.W = np.zeros(X.shape[1]+1)
+        # initialise the weights with small numbers 
         self.W = np.random.randn(X.shape[1]+1) / np.sqrt(X.shape[1]+1)
         
         # transform output variable to [0, 1] if required
@@ -88,15 +89,15 @@ class LogisticRegression:
         ones = np.ones(X_test.shape[0])[:, None]
         X_new = np.hstack((ones, X_test))
         
-        h_X = np.dot(X_new, self.W)[:, None]
+        h_X = np.dot(X_new, self.W)
         
         # get the result from sigmoid function
-        y_predict_prob = self._sigmoid(h_X)[:, None]
+        y_predict_prob = self._sigmoid(h_X)
         
         return y_predict_prob.reshape(y_predict_prob.shape[0])
 
     def _predict(self, X_test):
-        """Predict the output variable in [0, 1]with the weights
+        """Predict the output variable in [0, 1] with the weights
         learned by the model
         
         Parameters:
@@ -126,7 +127,6 @@ class LogisticRegression:
         Predicted output variable
         """
         y_predict_prob = self.predict_prob(X_test)
-#         print y_predict_prob.shape
         positives = np.repeat(self.positive_label, y_predict_prob.shape)
         negatives = np.repeat(self.neg_label, y_predict_prob.shape)
         
