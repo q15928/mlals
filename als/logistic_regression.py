@@ -1,3 +1,5 @@
+import numpy as np
+
 class LogisticRegression:
     """Logistic regression model implementation from scratch.
     Logistic regression model is a simple classification model
