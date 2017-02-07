@@ -7,7 +7,8 @@ Linear regression model is a very common regression model which the output varia
 Gradient descent is the most common optimisation algorithm to learn the model parameters (weights) with the goal to minimise the cost function which is the residual sum of square (RSS).
 
 ## Logistic Regression
-Logistic regression model is a simple classification model which the output variable is discrete and categorical. By using "sigmoid" function, Logistic regression "squashes" the output variables between 0 and 1 to represent the probability of predicting possitive value.     
+Logistic regression model is a simple classification model which the output variable is discrete and categorical. By using "sigmoid" function, Logistic regression "squashes" the output variables between 0 and 1 to represent the probability of predicting possitive value. 
+
 Gradient descent is the optimisation algorithm to minimise the cost function which is the negtive log loss function.
 
 ## Navie Bayes
