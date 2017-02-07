@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
 # import math
 
 class MultinomialNBClassifier:
@@ -43,28 +44,30 @@ class MultinomialNBClassifier:
         self.X = X
         self.y = y
         self.classes = np.unique(y)
-        self._cal_posteriori()
+        self._cal_prior()
         self._cal_feat_prob()
 
 
-    def _cal_posteriori(self):
-        """compute posterior"""
-        self.posteriori = np.array([self.y[self.y==k].size/float(self.y.size) for k in self.classes])
-#         return posterior
+    def _cal_prior(self):
+        """compute prior"""
+        self.prior = np.array([self.y[self.y==k].size/float(self.y.size) for k in self.classes])
+        self.prior_log = np.log(self.prior)
 
     def _cal_feat_prob(self):
-        """compute the probabilities for each feature given a class.
+        """compute the probabilities for each feature given a class. 
         It is assumed that the features are with multinomial distribution
         """
         num_feats = self.X.shape[1]
         self.feat_prob = np.zeros((self.classes.shape[0], num_feats))
-#         alpha = 1
+        self.feat_prob_log = np.zeros((self.classes.shape[0], num_feats))
 
         for i in range(self.classes.shape[0]):
             for feat_ix in range(num_feats):
                 numerator = self.X[self.y==self.classes[i], feat_ix].sum() + self.alpha
                 denominator =  self.X[self.y==self.classes[i], :].sum() + self.alpha * num_feats
                 self.feat_prob[i, feat_ix] = numerator / float(denominator)
+
+        self.feat_prob_log = np.log(self.feat_prob)
 
 
     def predict(self, X_test):
@@ -78,7 +81,13 @@ class MultinomialNBClassifier:
         -------
             An array of the predicted classes
         """
-        return self.classes[np.argmax(np.dot(X_test, self.feat_prob.T) * self.posteriori, axis=1)]
+        # check if the X_test is sparse matrix: coo_matrix, csr_matrix, csc_matrix, lil_matrix
+        if isinstance(X_test, coo_matrix) or isinstance(X_test, csr_matrix) or isinstance(X_test, csc_matrix) \
+           or isinstance(X_test, lil_matrix):
+            # convert to dense matrix
+            X_test = X_test.A        
+        return self.classes[np.argmax(np.dot(X_test, self.feat_prob_log.T) + self.prior_log, axis=1)]
+        #return self.classes[np.argmax(np.dot(X_test, self.feat_prob.T) * self.posteriori, axis=1)]
 
 
     def predict_prob(self, X_test):
@@ -93,5 +102,6 @@ class MultinomialNBClassifier:
         -------
             An matrix of the predicted probabilities (m samples x k classes)
         """
-        res = np.dot(X_test, self.feat_prob.T) * self.posteriori
+        # res = np.dot(X_test, self.feat_prob.T) * self.posteriori
+        res = self.predict(X_test)
         return res / res.sum(axis=1)[:, None]
