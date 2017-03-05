@@ -24,9 +24,9 @@ class LogisticRegression:
             positive_label: the positive label for output
                 variable (default = None)
             threshold: threshold to define the probability of 
-                positive or negative predictions (default = 0.5)            
+                positive or negative predictions (default = 0.5)
+            
         """
-        
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.positive_label = positive_label
@@ -51,10 +51,9 @@ class LogisticRegression:
             self.positive_label = self.labels[0]
         self.neg_label = self.labels[self.labels != self.positive_label][0]
 
-        # initialise the weights with all zeros
-        # self.W = np.zeros(X.shape[1]+1)
-        # initialise the weights with small numbers 
-        self.W = np.random.randn(X.shape[1]+1) / np.sqrt(X.shape[1]+1)
+        # initialise the weights randomly with a mean of zero
+        self.W = np.random.randn(X.shape[1]+1, 1) / np.sqrt(X.shape[1]+1)
+#        self.W = np.random.randn(X.shape[1]+1) / np.sqrt(X.shape[1]+1)
         
         # transform output variable to [0, 1] if required
         self.transformed_y = self._convert_labels()
@@ -72,7 +71,7 @@ class LogisticRegression:
             derivatives = np.dot(X_add_ones.T, delta)
             
             # update the weights
-            self.W = self.W - self.learning_rate * derivatives.reshape(self.W.shape)
+            self.W = self.W - self.learning_rate * derivatives# .reshape(self.W.shape)
         
 
     def predict_prob(self, X_test):
@@ -96,10 +95,10 @@ class LogisticRegression:
         # get the result from sigmoid function
         y_predict_prob = self._sigmoid(h_X)
         
-        return y_predict_prob.reshape(y_predict_prob.shape[0])
+        return y_predict_prob#.reshape(y_predict_prob.shape[0])
 
     def _predict(self, X_test):
-        """Predict the output variable in [0, 1] with the weights
+        """Predict the output variable in [0, 1]with the weights
         learned by the model
         
         Parameters:
@@ -129,6 +128,7 @@ class LogisticRegression:
         Predicted output variable
         """
         y_predict_prob = self.predict_prob(X_test)
+#         print y_predict_prob.shape
         positives = np.repeat(self.positive_label, y_predict_prob.shape)
         negatives = np.repeat(self.neg_label, y_predict_prob.shape)
         
@@ -139,8 +139,7 @@ class LogisticRegression:
         """Sigmoid function
         """
         result = 1 / (1 + np.exp(-x))
-        result = result.reshape(x.shape[0])
-#         print "@sigmoid", result.shape
+#         result = result.reshape(x.shape[0])
         return result
 
     def _convert_labels(self):
@@ -153,7 +152,7 @@ class LogisticRegression:
             return np.where(self.y==self.positive_label, ones, zeros)
         else:
             return self.y
-
+        
     def _cal_log_loss(self):
         """Calculate the log loss with with the weights learned
         by the model
@@ -162,3 +161,4 @@ class LogisticRegression:
         
         return -np.sum(self.transformed_y * np.log(y_predict_prob) + \
                        (1-self.transformed_y) * np.log(1 - y_predict_prob))
+        
